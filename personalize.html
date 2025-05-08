@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Generate Your Story | MeTime Stories</title>
+  <style>
+    body {
+      background-color: #fef1e6;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .form-container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 550px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 25px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #ffa726;
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 14px;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #fb8c00;
+    }
+
+    .character-select {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      justify-content: center;
+    }
+
+    .character-option {
+      text-align: center;
+    }
+
+    .character-option img {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      transition: border-color 0.3s ease;
+    }
+
+    .character-option input[type="radio"] {
+      display: none;
+    }
+
+    .character-option input[type="radio"]:checked + img {
+      border-color: #ffa726;
+    }
+  </style>
+</head>
+<body>
+  <h2>Enter Details to Generate Your Story</h2>
+  <div class="form-container">
+    <form action="generate-story.html" method="POST" enctype="multipart/form-data">
+      <input type="text" name="child_name" placeholder="Child's Name" required />
+
+      <select name="gender" required>
+        <option value="">Gender:</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="neutral">Neutral</option>
+      </select>
+
+      <input type="text" name="parent1" placeholder="Parent 1" />
+      <input type="text" name="parent2" placeholder="Parent 2" />
+      <input type="text" name="uncle" placeholder="Uncle's Name" />
+      <input type="text" name="teddy" placeholder="Teddy's Name" />
+
+      <label for="image-upload">Upload Character Image:</label>
+      <input type="file" id="image-upload" name="character_image" accept="image/*" />
+
+      <p style="text-align:center; margin: 15px 0;">Or choose a character:</p>
+      <div class="character-select">
+        <label class="character-option">
+          <input type="radio" name="default_character" value="ronan" />
+          <img src="images/ronan.jpg" alt="Ronan" />
+          <div>Ronan</div>
+        </label>
+        <label class="character-option">
+          <input type="radio" name="default_character" value="rose" />
+          <img src="images/rose.jpg" alt="Rose" />
+          <div>Rose</div>
+        </label>
+        <label class="character-option">
+          <input type="radio" name="default_character" value="tyler" />
+          <img src="images/tyler.jpg" alt="Tyler" />
+          <div>Tyler</div>
+        </label>
+      </div>
+
+      <button type="submit">Generate Story</button>
+    </form>
+  </div>
+</body>
+</html>
