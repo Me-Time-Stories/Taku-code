@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Me Time Stories</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    .card, .login-section {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin: 2rem auto;
+      width: 90%;
+      max-width: 600px;
+    }
+    .home-container {
+      text-align: center;
+      padding: 4rem 1rem;
+      background: linear-gradient(135deg, #2A4365 0%, #1a365d 100%);
+      border-radius: 0 0 20px 20px;
+      color: white;
+    }
+    .home-container h1 {
+      font-size: 3em;
+      margin: 0.2em 0;
+    }
+    .home-container p {
+      font-size: 1.2em;
+      font-style: italic;
+    }
+    .button {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      margin: 0.5rem;
+      background-color: #2A4365;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .button:hover {
+      background-color: #1a365d;
+    }
+    input, select {
+      display: block;
+      width: 100%;
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .top-nav {
+      background: linear-gradient(135deg, #2A4365 0%, #1a365d 100%);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    .nav-item {
+      color: white;
+      padding: 0.75rem 1.5rem;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+    .nav-item:hover {
+      background-color: rgba(255,255,255,0.2);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    let state = {
+      page: 'landing',
+      logged_in: false,
+      user_type: null,
+      show_login: false,
+      login_type: null,
+      step: 1,
+      user_data: {},
+      story_choice: null,
+      parent_dashboard: {
+        child_name: "Default",
+        reading_time: 0,
+        completed_stories: [],
+        preferences: { educational: true, bedtime_mode: false, sound_effects: true, read_aloud: false },
+        last_read: new Date()
+      },
+      subscription_plans: {
+        basic: {
+          name: "Basic",
+          price: "£9.99/month",
+          books: 3,
+          tokens: 50,
+          features: [
+            "3 printed books/month",
+            "50 customization tokens",
+            "Basic story templates",
+            "Digital reading unlimited"
+          ]
+        },
+        premium: {
+          name: "Premium",
+          price: "£14.99/month",
+          books: 6,
+          tokens: 100,
+          features: [
+            "6 printed books/month",
+            "100 customization tokens",
+            "Advanced story templates",
+            "Priority support",
+            "Digital reading unlimited"
+          ]
+        },
+        unlimited: {
+          name: "Unlimited",
+          price: "£19.99/month",
+          books: -1,
+          tokens: 200,
+          features: [
+            "Unlimited printed books",
+            "200 customization tokens",
+            "All story templates",
+            "Priority support",
+            "Digital reading unlimited",
+            "Exclusive content"
+          ]
+        }
+      }
+    };
+
+    function render() {
+      const app = document.getElementById('app');
+      app.innerHTML = '';
+
+      if (state.logged_in) {
+        if (state.user_type === 'parent') {
+          showParentDashboard();
+        } else if (state.user_type === 'teacher') {
+          showTeacherDashboard();
+        } else if (state.user_type === 'student') {
+          showChildDashboard();
+        } else if (state.user_type === 'author') {
+          showAuthorPortal();
+        }
+      } else if (state.show_login) {
+        showLoginForm(state.login_type);
+      } else {
+        showLogin();
+      }
+    }
+
+    function showLogin() {
+      const app = document.getElementById('app');
+      app.innerHTML = `
+        <div class="home-container">
+          <h1>Me Time Stories</h1>
+          <p>Where You are the center of every Story</p>
+        </div>
+        <div class="login-section">
+          <h3>Quick Login</h3>
+          <button class="button" onclick="showLoginType('school')">🏫 School Login</button>
+          <button class="button" onclick="showLoginType('parent')">👨‍👩‍👧‍👦 Parent Login</button>
+          <button class="button" onclick="showLoginType('student')">📚 Student Login</button>
+          <button class="button" onclick="showLoginType('author')">✍️ Author Login</button>
+        </div>
+      `;
+    }
+
+    function showLoginType(type) {
+      state.show_login = true;
+      state.login_type = type;
+      render();
+    }
+
+    function showLoginForm(type) {
+      const app = document.getElementById('app');
+      app.innerHTML = `
+        <div class="login-section">
+          <h3>Welcome Back!</h3>
+          <p>This is a demo version - enter your info and click Login</p>
+          <form onsubmit="handleLogin(event, '${type}')">
+            ${type === 'school' ? `
+              <select name="role" required>
+                <option value="">Select Role</option>
+                <option value="School Administrator">School Administrator</option>
+                <option value="Teacher">Teacher</option>
+              </select>
+            ` : ''}
+            <input type="email" name="email" placeholder="Email" required />
+            <input type="password" name="password" placeholder="Password" required />
+            <button type="submit" class="button">Login</button>
+            <button type="button" class="button" onclick="backToHome()">Back to Home</button>
+          </form>
+        </div>
+      `;
+    }
+
+    function handleLogin(event, type) {
+      event.preventDefault();
+      const form = event.target;
+      const email = form.email.value;
+      const password = form.password.value;
+
+      state.logged_in = true;
+      state.user_type = type;
+      state.show_login = false;
+      render();
+    }
+
+    function backToHome() {
+      state.show_login = false;
+      state.login_type = null;
+      render();
+    }
+
+    function showParentDashboard() {
+      const app = document.getElementById('app');
+      app.innerHTML = `
+        <div class="card">
+          <h2>Welcome to your Parent Dashboard</h2>
+          <p>This is a placeholder dashboard view for Parent users.</p>
+          <button class="button" onclick="logout()">Logout</button>
+        </div>
+      `;
+    }
+
+    function showTeacherDashboard() {
+      const app = document.getElementById('app');
+      app.innerHTML = `
+        <div class="card">
+          <h2>Welcome to your Teacher Dashboard</h2>
+          <p>This is a placeholder dashboard view for Teacher users.</p>
+          <button class="button" onclick="logout()">Logout</button>
+        </div>
+      `;
+    }
+
+    function showChildDashboard() {
+      const app = document.getElementById('app');
+      app.innerHTML = `
+        <div class="card">
+          <h2>Welcome to your Student Dashboard</h2>
+          <p>This is a placeholder dashboard view for Student users.</p>
+          <button class="button" onclick="logout()">Logout</button>
+        </div>
+      `;
+    }
+
+    function showAuthorPortal() {
+      const app = document.getElementById('app');
+      app.innerHTML = `
+        <div class="card">
+          <h2>Welcome to your Author Portal</h2>
+          <p>This is a placeholder dashboard view for Author users.</p>
+          <button class="button" onclick="logout()">Logout</button>
+        </div>
+      `;
+    }
+
+    function logout() {
+      state.logged_in = false;
+      state.user_type = null;
+      state.page = 'landing';
+      state.show_login = false;
+      state.login_type = null;
+      render();
+    }
+
+    render();
+  </script>
+</body>
+</html>
